@@ -80,5 +80,8 @@
             "require": "5.4.*",
             "docker": true
         }
+    },
+    "require-dev": {
+        "symfony/maker-bundle": "^1.43"
     }
 }
