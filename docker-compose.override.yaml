@@ -6,3 +6,9 @@ services:
     ports:
       - "5432"
 ###< doctrine/doctrine-bundle ###
+networks:
+  default:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.27.0.0/16
