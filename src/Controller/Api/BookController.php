@@ -2,12 +2,15 @@
 
 namespace App\Controller\Api;
 
+use App\Exception\BookNotFoundException;
 use App\Repository\BookRepository;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Uid\Uuid;
 
 class BookController extends AbstractController
 {
@@ -34,5 +37,20 @@ class BookController extends AbstractController
         $data = $this->books->findByFilter($filter, $offset, $limit);
 
         return $this->json($data);
+    }
+
+    /**
+     * @Rest\Get("/books/{id}", name="books.get")
+     * @param Uuid $id
+     * @return JsonResponse
+     */
+    public function show(Uuid $id) : JsonResponse
+    {
+        $book = $this->books->findOneBy(['id' => $id]);
+        if (!$book) {
+            throw new BookNotFoundException($id);
+        }
+
+        return $this->json($book);
     }
 }

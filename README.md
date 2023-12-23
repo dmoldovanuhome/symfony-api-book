@@ -3,6 +3,7 @@
 Project created on Symfony 5.4, using FOSRestBundle, for demonstration an elementary use of API.
 
 ### Start Docker
+To start your database container run
 ```phpregexp
 docker-compose up -d
 ```
