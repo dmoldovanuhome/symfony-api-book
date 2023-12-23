@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Contracts\WriteBookDtoInterface;
 use App\Dto\ReadBookDto;
 use App\Entity\Book;
 use App\Wrapper\ApiPage;
@@ -92,9 +93,22 @@ class BookRepository extends ServiceEntityRepository
         foreach ($paginator as $book) {
             $content->add(ReadBookDto::to($book));
         }
-        $content->count();
-
 
         return ApiPage::of($content, $total, $offset, $limit);
+    }
+
+    /**
+     * @param Book $book
+     * @param WriteBookDtoInterface $dto
+     * @return Book
+     */
+    public function update(Book $book, WriteBookDtoInterface $dto) : Book
+    {
+        $book->setTitle($dto->getTitle() ?? $book->getTitle());
+        $book->setAuthor($dto->getAuthor() ?? $book->getAuthor());
+        $book->setDescription($dto->getDescription() ?? $book->getDescription());
+        $book->setPrice($dto->getPrice() ?? $book->getPrice());
+
+        return $book;
     }
 }

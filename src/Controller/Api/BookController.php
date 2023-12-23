@@ -3,6 +3,7 @@
 namespace App\Controller\Api;
 
 use App\Dto\CreateBookDto;
+use App\Dto\UpdateBookDto;
 use App\Exception\BookNotFoundException;
 use App\Factory\BookFactory;
 use App\Repository\BookRepository;
@@ -78,6 +79,27 @@ class BookController extends AbstractController
             'message' => 'Book created',
             'id' => $book->getId(),
         ], Response::HTTP_CREATED);
+    }
+
+    /**
+     * @Route("/books/{id}", name="project_edit", methods={"PUT"})
+     * @param Request $request
+     * @param Uuid $id
+     * @return JsonResponse
+     */
+    public function update(Request $request, Uuid $id) : JsonResponse
+    {
+        $book = $this->books->findOneBy(['id' => $id]);
+
+        if (!$book) {
+            throw new BookNotFoundException($id);
+        }
+
+        $dto = UpdateBookDto::hydrate($request);
+        $book = $this->books->update($book, $dto);
+        $this->objectManager->flush();
+
+        return $this->json($book);
     }
 
     /**
