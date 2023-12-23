@@ -7,6 +7,8 @@ use App\Dto\UpdateBookDto;
 use App\Exception\BookNotFoundException;
 use App\Factory\BookFactory;
 use App\Repository\BookRepository;
+use App\Validator\CreateBookValidator;
+use App\Validator\UpdateBookValidator;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -70,6 +72,15 @@ class BookController extends AbstractController
     public function create(Request $request) : JsonResponse
     {
         $dto = CreateBookDto::hydrate($request);
+
+        $validator = new CreateBookValidator($dto);
+
+        if(!$validator->isValid()) {
+            return $this->json([
+                'errors' => $validator->getErrors(),
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
         $book = BookFactory::fromDto($dto);
 
         $this->objectManager->persist($book);
@@ -96,6 +107,15 @@ class BookController extends AbstractController
         }
 
         $dto = UpdateBookDto::hydrate($request);
+
+        $validator = new UpdateBookValidator($dto);
+
+        if(!$validator->isValid()) {
+            return $this->json([
+                'errors' => $validator->getErrors(),
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
         $book = $this->books->update($book, $dto);
         $this->objectManager->flush();
 

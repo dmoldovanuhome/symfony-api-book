@@ -5,6 +5,8 @@ namespace App\Entity;
 use App\Repository\BookRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 
 /**
@@ -22,11 +24,13 @@ class Book
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank
      */
     private $title;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank
      */
     private $author;
 
@@ -37,6 +41,7 @@ class Book
 
     /**
      * @ORM\Column(type="float")
+     * @Assert\Positive
      */
     private $price;
 
