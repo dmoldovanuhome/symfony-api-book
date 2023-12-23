@@ -4,3 +4,4 @@ fos_rest:
       - { path: '^/api', priorities: ['json'], fallback_format: json, prefer_extension: true }
   view:
     view_response_listener: 'force'
+  param_fetcher_listener: force
