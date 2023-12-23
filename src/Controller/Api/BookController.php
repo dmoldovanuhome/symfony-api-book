@@ -79,4 +79,23 @@ class BookController extends AbstractController
             'id' => $book->getId(),
         ], Response::HTTP_CREATED);
     }
+
+    /**
+     * @Rest\Delete("/books/{id}", name="books.delete")
+     * @param Uuid $id
+     * @return JsonResponse
+     */
+    public function delete(Uuid $id) : JsonResponse
+    {
+        $book = $this->books->findOneBy(['id' => $id]);
+
+        if (!$book) {
+            throw new BookNotFoundException($id);
+        }
+
+        $this->books->remove($book);
+        $this->objectManager->flush();
+
+        return $this->json([], Response::HTTP_NO_CONTENT);
+    }
 }
