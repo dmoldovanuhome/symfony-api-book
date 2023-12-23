@@ -2,7 +2,7 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Book;
+use App\Factory\BookFactory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
@@ -63,14 +63,14 @@ class BookFixtures extends Fixture
         // create 1 000 000 records
         $chunkSize = 20;
         for ($i = 1; $i <= 1000000; $i++) {
-            $book = new Book();
-            $book->setTitle($this->faker->randomElement(self::$bookTitles) . ' vol. ' . $i);
-            $book->setAuthor(
-                $this->faker->randomElement(self::$bookAuthorFirstnames) . ' ' .
-                $this->faker->randomElement(self::$bookAuthorLastnames)
-            );
-            $book->setDescription($this->faker->paragraph());
-            $book->setPrice($this->faker->randomFloat(2, 1, 500));
+
+            $book = BookFactory::create([
+                'title' => $this->faker->randomElement(self::$bookTitles) . ' vol. ' . $i,
+                'author' => $this->faker->randomElement(self::$bookAuthorFirstnames) . ' ' .
+                    $this->faker->randomElement(self::$bookAuthorLastnames),
+                'description' => $this->faker->paragraph(),
+                'price' => $this->faker->randomFloat(2, 1, 500),
+            ]);
 
             $manager->persist($book);
 
