@@ -5,7 +5,8 @@ namespace App\Dto;
 use App\Contracts\WriteBookDtoInterface;
 use App\Helper\Traits\HydrateStaticTrait;
 
-class UpdateBookDto implements WriteBookDtoInterface
+
+class CreateBookDto implements WriteBookDtoInterface
 {
     use HydrateStaticTrait;
 
@@ -25,7 +26,7 @@ class UpdateBookDto implements WriteBookDtoInterface
     /**
      * @param mixed $title
      */
-    public function setTitle($title): UpdateBookDto
+    public function setTitle($title): CreateBookDto
     {
         $this->title = $title;
         return $this;
@@ -42,7 +43,7 @@ class UpdateBookDto implements WriteBookDtoInterface
     /**
      * @param mixed $author
      */
-    public function setAuthor($author): UpdateBookDto
+    public function setAuthor($author): CreateBookDto
     {
         $this->author = $author;
         return $this;
@@ -59,7 +60,7 @@ class UpdateBookDto implements WriteBookDtoInterface
     /**
      * @param mixed $description
      */
-    public function setDescription($description): UpdateBookDto
+    public function setDescription($description): CreateBookDto
     {
         $this->description = $description;
         return $this;
@@ -78,6 +79,6 @@ class UpdateBookDto implements WriteBookDtoInterface
      */
     public function setPrice($price): void
     {
-        $this->price = $price;
+        $this->price = (float) $price;
     }
 }
