@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Repository\BookRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Uid\Uuid;
+
 
 /**
  * @ORM\Entity(repositoryClass=BookRepository::class)
@@ -12,8 +14,9 @@ class Book
 {
     /**
      * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue("CUSTOM")
+     * @ORM\CustomIdGenerator("doctrine.uuid_generator")
+     * @ORM\Column(type="uuid", unique=true)
      */
     private $id;
 
@@ -37,7 +40,7 @@ class Book
      */
     private $price;
 
-    public function getId(): ?int
+    public function getId() : Uuid
     {
         return $this->id;
     }
