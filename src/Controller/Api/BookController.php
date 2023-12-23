@@ -2,8 +2,11 @@
 
 namespace App\Controller\Api;
 
+use App\Dto\CreateBookDto;
 use App\Exception\BookNotFoundException;
+use App\Factory\BookFactory;
 use App\Repository\BookRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -14,11 +17,15 @@ use Symfony\Component\Uid\Uuid;
 
 class BookController extends AbstractController
 {
+    /** @var BookRepository */
     protected $books;
+    /** @var EntityManagerInterface  */
+    private $objectManager;
 
-    public function __construct(BookRepository $bookRepository)
+    public function __construct(BookRepository $bookRepository, EntityManagerInterface $objectManager)
     {
         $this->books = $bookRepository;
+        $this->objectManager = $objectManager;
     }
 
     /**
@@ -52,5 +59,24 @@ class BookController extends AbstractController
         }
 
         return $this->json($book);
+    }
+
+    /**
+     * @Rest\Post("/books", name="books.create")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function create(Request $request) : JsonResponse
+    {
+        $dto = CreateBookDto::hydrate($request);
+        $book = BookFactory::fromDto($dto);
+
+        $this->objectManager->persist($book);
+        $this->objectManager->flush($book);
+
+        return $this->json([
+            'message' => 'Book created',
+            'id' => $book->getId(),
+        ], Response::HTTP_CREATED);
     }
 }
