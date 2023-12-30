@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class ExceptionListener
 {
@@ -31,6 +32,8 @@ class ExceptionListener
         } else if ($exception instanceof HttpExceptionInterface) {
             $response->setStatusCode($exception->getStatusCode());
             $response->headers->replace($exception->getHeaders());
+        } else if ($exception instanceof AccessDeniedException) {
+            $response->setStatusCode(Response::HTTP_UNAUTHORIZED);
         } else {
             $response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
         }
