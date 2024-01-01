@@ -33,3 +33,9 @@ in_memory:
 here you can change credentials, or add new user.
 
 Note: Better method of authorization is to use the tokens of users from DB.
+
+
+### API documentation
+The documentation is made by NelmioApiDocBundle and Swagger UI.  You can access it by 
+[app.domain/api/doc](http://app.domain/api/doc) directly in browser w/o auth.
+The documentation is created from annotations written in Controller's methods.

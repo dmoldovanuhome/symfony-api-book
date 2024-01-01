@@ -4,6 +4,7 @@ namespace App\Controller\Api;
 
 use App\Dto\CreateBookDto;
 use App\Dto\UpdateBookDto;
+use App\Entity\Book;
 use App\Exception\BookNotFoundException;
 use App\Factory\BookFactory;
 use App\Repository\BookRepository;
@@ -11,6 +12,9 @@ use App\Validator\CreateBookValidator;
 use App\Validator\UpdateBookValidator;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use OpenApi\Annotations as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,6 +22,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Uid\Uuid;
 
+
+/**
+ * @Route("/")
+ * @OA\Tag(name="books")
+ */
 class BookController extends AbstractController
 {
     /** @var BookRepository */
@@ -36,6 +45,18 @@ class BookController extends AbstractController
      * @Rest\QueryParam(name="filter", nullable=true, description="Filter criteria as an array", map=true)
      * @Rest\QueryParam(name="page", nullable=true, description="Page number", default="0", requirements="\d+")
      * @Rest\QueryParam(name="limit", nullable=true, description="Per page", default="20", requirements="\d+")
+     * @OA\Response(
+     *     response=200,
+     *     description="Returns the list of books",
+     *     @OA\JsonContent(
+     *         ref="#/components/schemas/Book"
+     *     ),
+     *     @OA\Schema(
+     *         type="array",
+     *         @OA\Items(ref=@Model(type=Book::class))
+     *     )
+     * )
+     *
      * @param Request $request
      * @return JsonResponse
      */
@@ -51,6 +72,15 @@ class BookController extends AbstractController
 
     /**
      * @Rest\Get("/books/{id}", name="books.get")
+     * @OA\Response(
+     *     response=200,
+     *     description="Returns one book by UUID",
+     * )
+     * @OA\Response(
+     *     response=404,
+     *     description="Book not found"
+     * )
+     *
      * @param Uuid $id
      * @return JsonResponse
      */
@@ -66,6 +96,24 @@ class BookController extends AbstractController
 
     /**
      * @Rest\Post("/books", name="books.create")
+     * @Security(name="Basic Auth")
+     * @OA\Response(
+     *     response=201,
+     *     description="return UUID of book."
+     * )
+     * @OA\RequestBody(
+     *   description="Create a new book",
+     *   required=true,
+     *   @OA\JsonContent(ref="#/components/schemas/Book")
+     * )
+     * @OA\Response(
+     *     response=400,
+     *     description="Errors of validations, of internal server errors. Return error description"
+     * )
+     * @OA\Response(
+     *     response=401,
+     *     description="Unauthorized"
+     * )
      * @param Request $request
      * @return JsonResponse
      */
@@ -94,6 +142,24 @@ class BookController extends AbstractController
 
     /**
      * @Route("/books/{id}", name="project_edit", methods={"PUT"})
+     * @Security(name="Basic Auth")
+     * @OA\RequestBody(
+     *   description="Update the book",
+     *   required=true,
+     *   @OA\JsonContent(ref="#/components/schemas/Book")
+     * )
+     * @OA\Response(
+     *     response=200,
+     *     description="Return JSON of updated book"
+     * )
+     * @OA\Response(
+     *     response=400,
+     *     description="Errors of validations, of internal server errors. Return error description"
+     * )
+     * @OA\Response(
+     *     response=401,
+     *     description="Unauthorized"
+     * )
      * @param Request $request
      * @param Uuid $id
      * @return JsonResponse
@@ -124,6 +190,19 @@ class BookController extends AbstractController
 
     /**
      * @Rest\Delete("/books/{id}", name="books.delete")
+     * @Security(name="Basic Auth")
+     * @OA\Response(
+     *     response=204,
+     *     description="Delete the book by UUID"
+     * )
+     * @OA\Response(
+     *     response=404,
+     *     description="Book not found"
+     * )
+     * @OA\Response(
+     *     response=401,
+     *     description="Unauthorized"
+     * )
      * @param Uuid $id
      * @return JsonResponse
      */
